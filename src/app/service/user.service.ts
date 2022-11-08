@@ -3,6 +3,7 @@ import { HttpClient, HttpResponse, HttpErrorResponse, HttpEvent } from '@angular
 import { environment } from '../../environments/environment'
 import { Observable, subscribeOn } from 'rxjs';
 import { User } from '../model/user';
+import { CustomHttpResponse } from '../model/custom-http-response';
 
 @Injectable({
   providedIn: 'root'
@@ -24,8 +25,8 @@ export class UserService {
     return this.http.post<User>(`${this.host}/user/update`, formData);
   }
 
-  public resetPassword(email: string): Observable<any | HttpErrorResponse> {
-    return this.http.get(`${this.host}/user/resetPassword/${email}`);
+  public resetPassword(email: string): Observable<CustomHttpResponse | HttpErrorResponse> {
+    return this.http.get<CustomHttpResponse>(`${this.host}/user/resetPassword/${email}`);
   }
 
   public updateProfileImage(formData: FormData): Observable<HttpEvent<User> | HttpErrorResponse> {
@@ -35,8 +36,8 @@ export class UserService {
     });
   }
 
-  public deleteUser(userId: number): Observable<any | HttpErrorResponse> {
-    return this.http.delete<User>(`${this.host}/user/delete/${userId}`);
+  public deleteUser(userId: number): Observable<CustomHttpResponse | HttpErrorResponse> {
+    return this.http.delete<CustomHttpResponse>(`${this.host}/user/delete/${userId}`);
   }
 
   public addUserToLocalCache(users: User[]): void {
