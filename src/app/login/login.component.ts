@@ -2,6 +2,7 @@ import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Route, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { HeaderType } from '../enum/headers-type.enum';
 import { NotificationType } from '../enum/notification-type.enum';
 import { User } from '../model/user';
 import { AuthenticationService } from '../service/authentication.service';
@@ -13,7 +14,7 @@ import { NotificationService } from '../service/notification.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  public showLoading!: boolean;
+  showLoading!: boolean;
   private subscriptions: Subscription[] = [];
 
   constructor(private router: Router, private authenticationService: AuthenticationService,
@@ -33,7 +34,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.authenticationService.login(user).subscribe(
         (response: HttpResponse<User>) => {
-          const token = response.headers.get('Jwt-Token');
+          const token = response.headers.get(HeaderType.JWT_TOKEN);
           this.authenticationService.saveToken(token!);
           this.authenticationService.addUserToLocalCache(response.body!);
           this.router.navigateByUrl('/user/management');
@@ -49,7 +50,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
 
-  sendErrorNotification(notificationType: NotificationType, message: string) {
+  sendErrorNotification(notificationType: NotificationType, message: string): void {
     if(message) {
       this.notificationService.notify(notificationType, message);
     } else {
