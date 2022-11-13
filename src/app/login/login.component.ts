@@ -2,6 +2,7 @@ import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Route, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { NotificationType } from '../enum/notification-type.enum';
 import { User } from '../model/user';
 import { AuthenticationService } from '../service/authentication.service';
 import { NotificationService } from '../service/notification.service';
@@ -37,12 +38,28 @@ export class LoginComponent implements OnInit, OnDestroy {
           this.authenticationService.addUserToLocalCache(response.body!);
           this.router.navigateByUrl('/user/management');
           this.showLoading = false;
+        },
+        (errorResponse: HttpErrorResponse) => {
+          console.log(errorResponse);
+          this.sendErrorNotification(NotificationType.ERROR, errorResponse.error.message)
+          this.showLoading = false;
         }
       )
     );
   }
 
+
+  sendErrorNotification(notificationType: NotificationType, message: string) {
+    if(message) {
+      this.notificationService.notify(notificationType, message);
+    } else {
+      this.notificationService.notify(notificationType, 'AN ERROR OCURED. PLEASE TRY AGAIN');
+    }
+  }
+
+
   ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
 }
